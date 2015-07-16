@@ -14,11 +14,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import DatabaseCredentials.database;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import javax.json.Json;
+import javax.json.stream.JsonParser;
 import javax.ws.rs.DELETE;
 import static javax.ws.rs.HttpMethod.POST;
 import javax.ws.rs.POST;
@@ -159,14 +164,13 @@ public class GenericResource {
     
     
     
-     @PUT
+    @PUT
     @Path("/products")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
    
     public void putProduct(String content) throws SQLException, ParseException
     {
-            
         JSONParser jp = new JSONParser();
         JSONObject obj = (JSONObject) jp.parse(content);
         
@@ -174,26 +178,53 @@ public class GenericResource {
         String ProductID = objid.toString();
         int id = Integer.parseInt(ProductID);
         
-             Object objname = obj.get("name");
+        Object objname = obj.get("name");
         String name = objname.toString();
         
-          Object objdes = obj.get("description");
+        Object objdes = obj.get("description");
         String description = objdes.toString();
-        
-     
-        
+            
         Object objquantity = obj.get("quantity");
         String quantity_new = objquantity.toString();
         int quantity = Integer.parseInt(quantity_new);
-        
-        
-         conn = database.getConnection();
+          
+        conn = database.getConnection();
         // String query ="";
         String query="insert into product(ProductID, name, description, quantity) values('"+id+"','"+name+"','"+description+"','"+quantity+"')"; 
         Statement  st = conn.createStatement();
         st.executeUpdate(query);
     
+    }
     
+    
+    //----------------------
+    
+    @POST
+    @Consumes("application/json")
+    
+    public void doPost(String str) {
+        JsonParser parser = Json.createParser(new StringReader(str));
+        Map<String, String> mapKeyValue = new HashMap<>();
+        String key = "", val;
+        while (parser.hasNext()) {
+            JsonParser.Event evt = parser.next();
+            switch (evt) {
+                case KEY_NAME:
+                    key = parser.getString();
+                    break;
+                case VALUE_STRING:
+                    val = parser.getString();
+                    mapKeyValue.put(key, val);
+                    break;
+                case VALUE_NUMBER:
+                    val = Integer.toString(parser.getInt());
+                    mapKeyValue.put(key, val);
+                    break;
+            }
+        }
+        System.out.println(mapKeyValue);
+        String query ="INSERT INTO product (name, description, quantity) VALUES ( ?, ?, ?)";
+                
     }
     
     @DELETE
