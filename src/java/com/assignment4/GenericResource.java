@@ -242,14 +242,12 @@ public class GenericResource {
         String ProductID = objid.toString();
         int id = Integer.parseInt(ProductID);
         
-             Object objname = obj.get("name");
+        Object objname = obj.get("name");
         String name = objname.toString();
         
-          Object objdes = obj.get("description");
+        Object objdes = obj.get("description");
         String description = objdes.toString();
-        
-     
-        
+                
         Object objquantity = obj.get("quantity");
         String quantity_new = objquantity.toString();
         int quantity = Integer.parseInt(quantity_new);
@@ -257,9 +255,10 @@ public class GenericResource {
         
          conn = database.getConnection();
         // String query ="";
-        String query="insert into product(ProductID, name, description, quantity) values('"+id+"','"+name+"','"+description+"','"+quantity+"')"; 
+        String query="Delete from product where id ='"+id+"'"; 
         Statement  st = conn.createStatement();
         st.executeUpdate(query);
-        }
+       
+    }
 }
     
