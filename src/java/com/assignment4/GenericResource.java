@@ -229,9 +229,11 @@ public class GenericResource {
     
     @DELETE
     @Path("/products")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    
+    @Consumes("application/json")
+    @Produces("application/json")
    
+    
     public void deleteProduct(String content) throws SQLException, ParseException
     {
           
